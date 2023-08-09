@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cat Facts</title>
+    <link rel="stylesheet" />
+    <style>
+        .card {
+            width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <h1>Fin Cat Fact</h1>
+        <p id="fact"></p>
+        <button id="fact-button" onClick="getFact()">New Cat Fact</button>
+    </div>
+
+    <script>
+        let errorCount = 0
+        async function getFact() {
+
+            const url = "https://catfact.ninja/fact";
+
+            try {
+
+                if (errorCount >= 5) {
+                    throw new Error("Try after 30 min")
+                }
+                // po tozi nachin disable button
+                document.getElementById("fact-button").disabled = true;
+                const response = await fetch(url);
+                // vzimame dannite ot response, vrashta Promise
+
+                if (response.ok === false) {
+                    throw new Error("Is not working")
+                }
+                if (response.code === '404') {
+                    throw new Error(response.message)
+                }
+                console.log(response);
+
+                const data = await response.json();
+                const fact = data.fact
+                document.getElementById("fact").innerText = fact;
+                // prawim buttona enabled
+                document.getElementById("fact-button").disabled = false;
+            } catch (error) {
+                document.getElementById("fact").innerText = error;
+                document.getElementById("fact-button").disabled = false;
+                if (errorCount >= 5) {
+                    document.getElementById("fact-button").disabled = true;
+                }
+                errorCount++;
+            }
+        }
+    </script>
+</body>
+
+</html>
